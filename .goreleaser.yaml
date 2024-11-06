@@ -1,18 +1,8 @@
-# This is an example .goreleaser.yml file with some sensible defaults.
-# Make sure to check the documentation at https://goreleaser.com
-
-# The lines below are called `modelines`. See `:help modeline`
-# Feel free to remove those if you don't want/need to use them.
-# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
-# vim: set ts=2 sw=2 tw=0 fo=cnqoj
-
 version: 2
 
 before:
   hooks:
-    # You may remove this if you don't use go modules.
     - go mod tidy
-    # you may remove this if you don't need go generate
     - go generate ./...
 
 builds:
@@ -25,7 +15,6 @@ builds:
 
 archives:
   - format: tar.gz
-    # this name template makes the OS and Arch compatible with the results of `uname`.
     name_template: >-
       {{ .ProjectName }}_
       {{- title .Os }}_
@@ -33,7 +22,6 @@ archives:
       {{- else if eq .Arch "386" }}i386
       {{- else }}{{ .Arch }}{{ end }}
       {{- if .Arm }}v{{ .Arm }}{{ end }}
-    # use zip for windows archives
     format_overrides:
       - goos: windows
         format: zip
@@ -44,3 +32,88 @@ changelog:
     exclude:
       - "^docs:"
       - "^test:"
+
+brews:
+  - name: finf
+      
+    # You can adjust these fields if you need specific archive IDs
+    ids: 
+      - finf_Linux_x86_64
+      - finf_Windows_x86_64
+      - finf_Darwin_x86_64
+
+    # Optional: Specify the version of GOARM if needed
+    goarm: 6
+
+    # Optional: GOAMD64 if you need to specify a specific version of amd64
+    goamd64: v1
+
+    # URL for the artifacts, assuming this structure for your GitHub releases
+    url_template: "https://github.com/ArturBobotcko/finf/releases/download/{{ .Tag }}/finf_{{ .Os }}_{{ .Arch }}.tar.gz"
+
+    # Optional headers for the URL (if authentication is needed)
+    url_headers:
+      - "Accept: application/octet-stream"
+      - 'Authorization: bearer #{ENV["HOMEBREW_GITHUB_API_TOKEN"]}'
+
+    # Optional: Custom download strategy
+    download_strategy: CurlDownloadStrategy
+
+    # Optional: Custom code block for formula
+    custom_require: custom_download_strategy
+
+    # Commit author for updates to the formula
+    commit_author:
+      name: ArturBobotcko
+      email: artur.bobotcko@mail.ru
+
+    # Commit message template
+    commit_msg_template: "Brew formula update for {{ .ProjectName }} version {{ .Tag }}"
+
+    # Directory for the formula within the tap repo
+    directory: Formula
+
+    # Optional: Caveats for the user (installation instructions, etc.)
+    caveats: "This is the finf CLI tool."
+
+    # Optional: Description of the app
+    description: "CLI tool for displaying file information."
+
+    # License
+    license: "MIT"
+
+    # Skip upload if the release is a prerelease or in specific conditions
+    skip_upload: false
+
+    # Optional: Custom block for brew to handle special cases like head releases
+    custom_block: |
+      head "https://github.com/ArturBobotcko/finf.git"
+    
+    # Optional: List dependencies for the formula
+    dependencies:
+      - name: git
+      - name: go
+
+    # Optional: Conflicts with other packages
+    conflicts:
+      - svn
+
+    # Optional: Add service or plist block for Homebrew services
+    service: |
+      run: finf
+
+    # Optional: Test block for brew
+    test: |
+      system "#{bin}/finf --version"
+    
+    # Optional: Install script to modify the default behavior
+    install: |
+      bin.install "finf"
+    
+    # Optional: Additional instructions for installation
+    extra_install: |
+      bash_completion.install "completions/finf.bash" => "finf"
+    
+    # Optional: Post-installation script
+    post_install: |
+      etc.install "finf-config.conf"
