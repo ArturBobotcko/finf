@@ -35,6 +35,9 @@ changelog:
 
 brews:
   - name: finf
+    repository:
+      owner: ArturBobotcko  # Replace with your GitHub username
+      name: homebrew-finf   # The name of the Homebrew tap repository
       
     # You can adjust these fields if you need specific archive IDs
     ids: 
