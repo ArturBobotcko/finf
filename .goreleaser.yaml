@@ -39,31 +39,8 @@ brews:
       owner: ArturBobotcko  # Replace with your GitHub username
       name: homebrew-finf   # The name of the Homebrew tap repository
       
-    # You can adjust these fields if you need specific archive IDs
-    ids: 
-      - finf_Linux_x86_64
-      - finf_Windows_x86_64
-      - finf_Darwin_x86_64
-
-    # Optional: Specify the version of GOARM if needed
-    goarm: 6
-
-    # Optional: GOAMD64 if you need to specify a specific version of amd64
-    goamd64: v1
-
     # URL for the artifacts, assuming this structure for your GitHub releases
     url_template: "https://github.com/ArturBobotcko/finf/releases/download/{{ .Tag }}/finf_{{ .Os }}_{{ .Arch }}.tar.gz"
-
-    # Optional headers for the URL (if authentication is needed)
-    url_headers:
-      - "Accept: application/octet-stream"
-      - 'Authorization: bearer #{ENV["HOMEBREW_GITHUB_API_TOKEN"]}'
-
-    # Optional: Custom download strategy
-    download_strategy: CurlDownloadStrategy
-
-    # Optional: Custom code block for formula
-    custom_require: custom_download_strategy
 
     # Commit author for updates to the formula
     commit_author:
